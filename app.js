@@ -1,28 +1,20 @@
 const request = require("postman-request");
-const API_KEY = "38e9fa3d5c4ee233912330f4ff368da2";
+const getCoordinate = require("./utils/coordinate");
+const getWeather = require("./utils/weather");
 
-const place = "new york";
+const place = process.argv[2];
 
-const url = `http://api.weatherstack.com/current?access_key=${API_KEY}&query=37.8267,-122.4233`;
-// const geoCodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?access_token=pk.eyJ1Ijoic2FoaWxtaWRkeWEiLCJhIjoiY2tmdjR0YzdmMTNjMjMwdGJxZW94NW16cSJ9.lFl6SzSS7Ajm4N-3hPFNrA`;
+place
+  ? getCoordinate(place, (error, { str, placeName } = {}) => {
+      if (error) return console.log(error);
+      getWeather(str, (error, weather) => {
+        if (error) return console.log(error);
+        console.log(weather);
+        console.log(placeName);
+      });
+    })
+  : console.log("plese provide an address");
 
-function getCoordinate(place) {
-  let str = "1";
-  const geoCodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${place}.json?access_token=pk.eyJ1Ijoic2FoaWxtaWRkeWEiLCJhIjoiY2tmdjR0YzdmMTNjMjMwdGJxZW94NW16cSJ9.lFl6SzSS7Ajm4N-3hPFNrA`;
-  request(geoCodingUrl, { json: true }, async (error, response, body) => {
-    console.log(error);
-    // const coordinates = await response.body.features[0].center;
-    // return coordinates;
-    // str = (await str) + coordinates[0] + "," + coordinates[1];
-    str += "sj";
-  });
-  return str;
-}
+// const geoCodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/Washington.json?access_token=pk.eyJ1Ijoic2FoaWxtaWRkeWEiLCJhIjoiY2tmdjR0YzdmMTNjMjMwdGJxZW94NW16cSJ9.lFl6SzSS7Ajm4N-3hPFNrA`;
 
-// http.get(url, (res) => console.log(res.json()));
-
-// request({ url: url, json: true }, (error, response, body) => {
-//   //   const data = JSON.parse(response.body);
-//   console.log(response.body.current);
-// });
-console.log(getCoordinate(place));
+// const url = `http://api.weatherstack.com/current?access_key=38e9fa3d5c4ee233912330f4ff368da2&query=${coordinateStr}`;
